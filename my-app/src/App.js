@@ -1,38 +1,15 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import styles from './App.module.css';
 import Person from './Person/Person';
 import {Userinput, Useroutput} from './Assignment1/Assignment1';
 import { render } from 'react-dom';
 import ValidationComponent from './Assignment2/ValidationComponent/ValdationComponent';
 import CharComponent from './Assignment2/CharComponent/CharComponent';
-import charComponent from './Assignment2/CharComponent/CharComponent';
-
-class App extends Component {
-  render(){
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  };
-  
-}
+import styled from 'styled-components'
       
-class People extends Component{
+class App extends Component{
   state = {
     persons: [
       {id:"wwew", name: "Koko", relation: "Mother"},
@@ -90,13 +67,8 @@ class People extends Component{
   }
 
   render(){
-
-    const style = {
-      backgroundColor: 'yellow',
-
-    }
-
     let persons = null
+    let btnClass = '';
 
     if (this.state.showPerson) {
       persons = (
@@ -112,15 +84,33 @@ class People extends Component{
           })}
         </div>
       )
+
+      //style.backgroundColor = 'red';
+      //style[':hover'] = {
+      //  backgroundColor: 'salmon',
+      //  color: 'white'
+      //}
+      btnClass = styles.Red;
+    }
+
+    const classes = [];
+
+    if(this.state.persons.length <= 2){
+      classes.push(styles.red);
+    }
+    if(this.state.persons.length <= 1){
+      classes.push(styles.bold);
     }
 
     return(
-      <div>
-       <button 
-       style = {style}
-       onClick = {this.togglePersonHandler}>Click Me</button> 
-       { persons }
-      </div>
+      <div  className={styles.App}>
+        <h1>This is my react app</h1>
+        <p className={classes.join(' ')}>... And it's working.</p>
+        <button
+          className = {btnClass}
+          onClick = {this.togglePersonHandler}>Click Me</button> 
+        { persons }
+      </div>     
      );
   };
   
@@ -276,5 +266,5 @@ class Assignment_2 extends Component {
 //#endregion
 
 export default App;
-export {People, Assignment_1, Assignment_2};
+export {Assignment_1, Assignment_2};
 //export default Person;

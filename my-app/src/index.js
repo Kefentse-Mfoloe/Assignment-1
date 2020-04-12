@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App, {People, Assignment_1, Assignment_2} from './App';
+import App, {Assignment_1, Assignment_2} from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
@@ -9,11 +9,6 @@ ReactDOM.render(
     <App />
   </React.StrictMode>,
   document.getElementById('root')
-);
-
-ReactDOM.render(
-  <People />,
-  document.getElementById('people')
 );
 
 ReactDOM.render(

@@ -1,15 +1,36 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import styles from './App.module.css';
-import Person from './Person/Person';
-import {Userinput, Useroutput} from './Assignment1/Assignment1';
-import { render } from 'react-dom';
-import ValidationComponent from './Assignment2/ValidationComponent/ValdationComponent';
-import CharComponent from './Assignment2/CharComponent/CharComponent';
-import styled from 'styled-components'
+import Persons from '../Components/Persons/Persons';
+import Cockpit from '../Components/Cockpit/Cockpit'
+import {Userinput, Useroutput} from '../Assignment1/Assignment1'
+import ValidationComponent from '../Assignment2/ValidationComponent/ValdationComponent';
+import CharComponent from '../Assignment2/CharComponent/CharComponent';
+import withClass from '../HOC/withClass';
+import Aux from '../HOC/Auxiliary';
+import AuthContext from '../Context/auth-context';
       
 class App extends Component{
+  constructor(props) {
+    super(props);
+    console.log('[App.js] constructor');
+    
+    //#region Prior to ES6 we used to define state like this
+      /*  
+      this.state = {
+        persons: [
+          {id:"wwew", name: "Koko", relation: "Mother"},
+          {id:"dsas", name: "Matshube", relation: "Son"},
+          {id:"jgfu", name: "Tlharipane", relation: "Daughter"},
+          {id:"dfdf", name: "Itumeleng", relation: "Daughter"}
+        ],
+        showPerson: false
+      };
+      */
+
+    //#endregion
+  }
+
   state = {
     persons: [
       {id:"wwew", name: "Koko", relation: "Mother"},
@@ -17,8 +38,32 @@ class App extends Component{
       {id:"jgfu", name: "Tlharipane", relation: "Daughter"},
       {id:"dfdf", name: "Itumeleng", relation: "Daughter"}
     ],
-    showPerson: false
+    showPerson: false,
+    showCockpit: true,
+    authenticated: false,
+    changeCounter: 0,
+    msg: ""
+    
   };
+
+  // static getDerivedStateFromProps (props, state){
+  //   console.log('[App.js] getDerivedStateFromProps', props);
+  //   return state;
+  // }
+
+  componentDidMount (){
+    console.log('[App.js] componentDidMount');
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+    console.log('[App.js] shouldComponentUpdate');
+    return true;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot){
+    console.log('[App.js] componentDidUpdate');
+    console.log(snapshot);
+  }
 
   nameChangeHandler = (event, id) => {
     //#region This is how we change state without using immutable code
@@ -49,7 +94,12 @@ class App extends Component{
     const persons = [...this.state.persons];
     persons[personIndex] = person;
 
-    this.setState({persons: persons});
+    this.setState((prevState, props) => {
+      return {
+        persons: persons,
+        changeCounter: prevState.changeCounter + 1
+      }  
+    });
   }
 
   deletePersonHandler = (personIndex) => {
@@ -64,53 +114,53 @@ class App extends Component{
   togglePersonHandler = () => {
     const doesShow = this.state.showPerson; 
     this.setState({showPerson : !doesShow});
+
+  }
+
+  authenticationHandler = () => {
+    const x = this.state.authenticated
+    this.setState({authenticated: !x});
+    console.log(x.toString());
   }
 
   render(){
+    console.log('[App.js] render');
     let persons = null
-    let btnClass = '';
 
     if (this.state.showPerson) {
       persons = (
-        <div>        
-          {this.state.persons.map((generatedPerson, index) => {
-              return <Person 
-                      click={() => this.deletePersonHandler(index)}
-                      //click={this.deletePersonHandler.bind(this, index)}
-                      name={generatedPerson.name}
-                      age={generatedPerson.age}
-                      key={generatedPerson.id}
-                      changed={(event) => this.nameChangeHandler(event, generatedPerson.id)} />
-          })}
+        <div>    
+          <Persons 
+            persons={this.state.persons}
+            clicked={this.deletePersonHandler}
+            changed={this.nameChangeHandler}
+            authenticated={this.state.authenticated}
+          />
         </div>
       )
-
-      //style.backgroundColor = 'red';
-      //style[':hover'] = {
-      //  backgroundColor: 'salmon',
-      //  color: 'white'
-      //}
-      btnClass = styles.Red;
-    }
-
-    const classes = [];
-
-    if(this.state.persons.length <= 2){
-      classes.push(styles.red);
-    }
-    if(this.state.persons.length <= 1){
-      classes.push(styles.bold);
     }
 
     return(
-      <div  className={styles.App}>
-        <h1>This is my react app</h1>
-        <p className={classes.join(' ')}>... And it's working.</p>
-        <button
-          className = {btnClass}
-          onClick = {this.togglePersonHandler}>Click Me</button> 
-        { persons }
-      </div>     
+      <Aux>
+        <button onClick={() => {
+          this.setState({showCockpit: false})
+        }}>Hide cockpit</button>
+        <AuthContext.Provider 
+          value={{authenticated: this.state.authenticated, 
+                  login:this.authenticationHandler
+                }} >
+          {this.state.showCockpit ? 
+            <Cockpit title={this.props.title} 
+                  showPerson={this.state.showPerson}
+                  personsLength={this.state.persons.length}
+                  clicked={this.togglePersonHandler}
+                  login={this.authenticationHandler} />
+            : null
+          }
+          { persons }
+        </AuthContext.Provider>
+        
+      </Aux>     
      );
   };
   
@@ -265,6 +315,7 @@ class Assignment_2 extends Component {
 }
 //#endregion
 
-export default App;
+//export default App;
+export default withClass(App, styles.App);
 export {Assignment_1, Assignment_2};
 //export default Person;

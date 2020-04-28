@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App, {Assignment_1, Assignment_2} from './App';
+import App, {Assignment_1, Assignment_2} from './Containers/App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App title="This is my react app"/>
   </React.StrictMode>,
   document.getElementById('root')
 );
